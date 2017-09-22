@@ -10,10 +10,11 @@ import java.util.concurrent.Semaphore;
  */
 public class Sleepingbarber extends Thread {
 
+    // Some modifiers
+    private static final long BARBER_WORK_DELAY = 5000; // Modify worktime for barber
+    private static final long CUSTOMER_DENSITY = 1000; // Modify how often customer arrives
     // Uses Semaphores to lock access to concurrent resources
-    public static Semaphore customers = new Semaphore(0);
-    public static Semaphore barber = new Semaphore(0);
-    public static Semaphore chairs = new Semaphore(1);
+    private static Semaphore customers = new Semaphore(0);
 
     // Set barbershop capacity, initialize empty seats.
     private final static int capacity = 10;
@@ -24,17 +25,47 @@ public class Sleepingbarber extends Thread {
     private int rejectedCustomers = 0;
     private int customerID = 1;
     private long totalWorkingTime = 0L;
-    private long startTime = System.currentTimeMillis();
-
-    private long runningTime() {
-        // Calculates running time of the script
-        long now = System.currentTimeMillis();
-        return now - startTime;
-    }
+    private static Semaphore barber = new Semaphore(0);
+    private static Semaphore chairs = new Semaphore(1);
+    private static long startTime = System.currentTimeMillis();
 
     private static void msg(String msg) {
         // Just simplifies writing to the console
-        System.out.println(msg);
+        System.out.println(System.currentTimeMillis() - startTime + " ms --- " + msg);
+    }
+
+    public static void main(String[] args) {
+
+        // This is where we set up shop!
+        Sleepingbarber shop = new Sleepingbarber();
+        shop.start();
+
+    }
+
+    // Aync run method. We instantiate the barber, and start him looking for customers.
+    // Then we loop forever, instantiating new customers at random intervals.
+    // The barber is looping and trying to find customers as they arrive.
+    // When he is busy, they take a seat. If there are no seats, they leave.
+    @Override
+    public void run() {
+
+        Barber thomas = new Barber();
+        thomas.start();
+
+        while (true) {
+
+            Customer customer = new Customer(customerID);
+            customerID++;
+            customer.start();
+            msg("New customer arrives..");
+            try {
+                double waitFor = Math.random() * CUSTOMER_DENSITY; // Wait for x ms before next customer
+                Thread.sleep((long) waitFor); // Gotta get double to long somehow.. :P
+
+            } catch (InterruptedException ie) {
+                msg("Whoa! Who interrupted the wait time??");
+            }
+        }
     }
 
     class Customer extends Thread {
@@ -46,12 +77,12 @@ public class Sleepingbarber extends Thread {
         boolean waitingForService = true;
 
         // Constructor, giving each customer their ID
-        public Customer(int i) {
+        Customer(int i) {
             this.id = i;
         }
 
         // Method to get customer ID
-        public int getCustId() {
+        int getCustId() {
             return this.id;
         }
 
@@ -64,7 +95,7 @@ public class Sleepingbarber extends Thread {
                 try {
                     chairs.acquire();
                     if (freeSeats > 0 ) {
-                        System.out.println("Customer " + getCustId() + " took seat " + freeSeats);
+                        msg("Customer " + getCustId() + " took seat " + freeSeats);
                         freeSeats--;
                         customers.release(); // If we have a lock on customers, release it.
                         chairs.release(); // Release our lock on the chairs.
@@ -77,14 +108,16 @@ public class Sleepingbarber extends Thread {
                         System.out.println("No free seats available. Rejected " + rejectedCustomers + " customer(s)..");
                     }
                 } catch (InterruptedException e) {
+                    msg("Whoa! Who interrupted the customer thread??");
                 }
             }
         }
 
     }
+
     class Barber extends Thread {
 
-        public Barber() {
+        Barber() {
         }
 
         @Override
@@ -102,6 +135,7 @@ public class Sleepingbarber extends Thread {
                     this.serviceCustomer();
 
                 } catch (InterruptedException e) {
+                    msg("Whoa! Who interrupted the barber!?");
                 }
             }
 
@@ -109,52 +143,19 @@ public class Sleepingbarber extends Thread {
 
         private void serviceCustomer() {
             try {
-                double workFor = Math.random() * 5000; // Work for x number of ms
+                double workFor = Math.random() * BARBER_WORK_DELAY; // Work for x number of ms
                 msg("Barber is working for " + workFor + " ms..");
                 Thread.sleep((long) workFor); //(long) workFor); // Gotta get double to long somehow.. :P
                 servicedCustomers++; // When we're done, increment counter
                 totalWorkingTime += workFor; // Add work time to total
                 msg("Barber is done! Serviced " + servicedCustomers + " customer(s) so far..");
                 msg("Total working time so far: " + totalWorkingTime + " ms");
-                msg("Total running time so far: " + runningTime() + " ms");
 
-            }catch(InterruptedException ie) {
+            } catch (InterruptedException ie) {
+                msg("Whoa! Who interrupted the working barber!?");
             }
         }
 
-    }
-
-    public static void main(String[] args) {
-
-        // This is where we set up shop!
-        Sleepingbarber shop = new Sleepingbarber();
-        shop.start();
-
-     }
-
-    // Aync run method. We instantiate the barber, and start him looking for customers.
-    // Then we loop forever, instantiating new customers at random intervals.
-    // The barber is looping and trying to find customers as they arrive.
-    // When he is busy, they take a seat. If there are no seats, they leave.
-    @Override
-    public void run() {
-
-        Barber thomas = new Barber();
-        thomas.start();
-
-        while(true) {
-
-            Customer customer = new Customer(customerID);
-            customerID++;
-            customer.start();
-            msg("New customer arrives..");
-            try{
-                double waitFor = Math.random() * 3000; // Wait for x ms before next customer
-                Thread.sleep((long) waitFor); // Gotta get double to long somehow.. :P
-
-            }catch (InterruptedException ie) {
-            }
-        }
     }
 }
 
