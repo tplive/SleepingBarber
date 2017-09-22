@@ -11,11 +11,11 @@ import java.util.concurrent.Semaphore;
 public class Sleepingbarber extends Thread {
 
     // Some modifiers
-    private static final long BARBER_WORK_DELAY = 5000; // Modify worktime for barber
-    private static final long CUSTOMER_DENSITY = 1000; // Modify how often customer arrives
+    private static final long BARBER_WORK_DELAY = 1000; // Modify worktime for barber
+    private static final long CUSTOMER_DENSITY = 1000; // Modify how long between customers arrive
 
     // Set barbershop capacity, initialize empty seats.
-    private final static int capacity = 10;
+    private final static int capacity = 5;
     private static int freeSeats = capacity;
 
     // Uses Semaphores to lock access to concurrent resources
@@ -105,7 +105,7 @@ public class Sleepingbarber extends Thread {
                     if (freeSeats > 0 ) {
                         msg("Customer " + getCustId() + " took seat " + freeSeats);
                         freeSeats--;
-                        customers.release(); // If we have a lock on customers, release it.
+                        customers.release(); // This signals the barber that a customer is ready
                         chairs.release(); // Release our lock on the chairs.
                         waitingForService = false; // Customer is leaving, never mind payment.. :P
 
