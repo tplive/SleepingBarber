@@ -68,16 +68,8 @@ public class Sleepingbarber extends Thread {
                         freeSeats--;
                         customers.release(); // If we have a lock on customers, release it.
                         chairs.release(); // Release our lock on the chairs.
+                        waitingForService = false; // Customer is leaving, never mind payment.. :P
 
-                        try {
-                            barber.acquire(); // Get a lock on the barber, if available
-                            this.getServiced(); // Service customer
-                            // So if we managed to complete service without interruption,
-                            // customer can leave, so:
-                            waitingForService = false; // Customer is leaving, never mind payment.. :P
-
-                        }catch (InterruptedException ie) {
-                        }
                     }else { // freeSeats = 0 = No room for customer
                         waitingForService = false; // customer leaves
                         rejectedCustomers++; // Another disappointed customer
@@ -87,18 +79,6 @@ public class Sleepingbarber extends Thread {
                 } catch (InterruptedException e) {
                 }
             }
-        }
-
-        public void getServiced() {
-            try{
-                System.out.println("Servicing customer #" + servicedCustomers);
-                Thread.sleep(1000); // Customer service takes x ms
-            }catch (InterruptedException ie) {
-                msg("Customer was interrupted during service");
-            }
-
-            servicedCustomers++;
-            System.out.println("Servicing customer " + servicedCustomers);
         }
 
     }
