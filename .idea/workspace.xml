@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="cb7afca8-58b0-4b67-b28f-397ed5834281" name="Default" comment="">
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/no/qvidahl/Main.java" afterPath="$PROJECT_DIR$/src/no/qvidahl/Sleepingbarber.java" />
-    </list>
+    <list default="true" id="cb7afca8-58b0-4b67-b28f-397ed5834281" name="Default" comment="Implemented Semaphors and tuning to avoid locking." />
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -17,8 +15,8 @@
       <file leaf-file-name="Sleepingbarber.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/no/qvidahl/Sleepingbarber.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="332">
-              <caret line="62" column="120" lean-forward="false" selection-start-line="62" selection-start-column="120" selection-end-line="62" selection-end-column="120" />
+            <state relative-caret-position="255">
+              <caret line="17" column="44" lean-forward="true" selection-start-line="17" selection-start-column="44" selection-end-line="17" selection-end-column="44" />
               <folding>
                 <element signature="e#917#918#0" expanded="true" />
                 <element signature="e#952#953#0" expanded="true" />
@@ -175,7 +173,7 @@
       <updated>1505857807107</updated>
       <workItem from="1505857810730" duration="4313000" />
       <workItem from="1505976344668" duration="769000" />
-      <workItem from="1505985009365" duration="11951000" />
+      <workItem from="1505985009365" duration="12200000" />
     </task>
     <task id="LOCAL-00001" summary="Problem definition, take one.. ;)">
       <created>1505858031250</created>
@@ -195,7 +193,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="17033000" />
+    <option name="totallyTimeSpent" value="17282000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="54" y="36" width="1563" height="925" extended-state="0" />
@@ -300,8 +298,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/no/qvidahl/Sleepingbarber.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="332">
-          <caret line="62" column="120" lean-forward="false" selection-start-line="62" selection-start-column="120" selection-end-line="62" selection-end-column="120" />
+        <state relative-caret-position="255">
+          <caret line="17" column="44" lean-forward="true" selection-start-line="17" selection-start-column="44" selection-end-line="17" selection-end-column="44" />
           <folding>
             <element signature="e#917#918#0" expanded="true" />
             <element signature="e#952#953#0" expanded="true" />
