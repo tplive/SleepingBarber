@@ -20,6 +20,14 @@ public class Sleepingbarber extends Thread {
     private int servicedCustomers = 0;
     private int rejectedCustomers = 0;
     private int customerID = 1;
+    private long totalWorkingTime = 0L;
+    private long startTime = System.currentTimeMillis();
+
+
+    private long runningTime() {
+        long now = System.currentTimeMillis();
+        return now - startTime;
+    }
 
     private static void msg(String msg) {
         System.out.println(msg);
@@ -60,6 +68,7 @@ public class Sleepingbarber extends Thread {
                     }else { // freeSeats = 0 = No room for customer
                         waitingForService = false; // customer leaves
                         rejectedCustomers++; // Another disappointed customer
+                        chairs.release();
                         System.out.println("No free seats available. Rejected " + rejectedCustomers + " customer(s)..");
                     }
                 } catch (InterruptedException e) {
@@ -96,7 +105,7 @@ public class Sleepingbarber extends Thread {
                     freeSeats++;
                     barber.release(); // Ready to go to work
                     chairs.release(); // Done updating chairs
-                    msg("Found customer, servicing..");
+                    msg("Found customer, servicing! Now, " + freeSeats + " seats available.");
                     this.serviceCustomer();
 
                 } catch (InterruptedException e) {
@@ -111,7 +120,10 @@ public class Sleepingbarber extends Thread {
                 msg("Barber is working for " + workFor + " ms..");
                 Thread.sleep((long) workFor); //(long) workFor); // Gotta get double to long somehow.. :P
                 servicedCustomers++;
+                totalWorkingTime += workFor;
                 msg("Barber is done! Serviced " + servicedCustomers + " customer(s) so far..");
+                msg("Total working time so far: " + totalWorkingTime + " ms");
+                msg("Total running time so far: " + runningTime() + " ms");
 
             }catch(InterruptedException ie) {
                 msg("Barber was interrupted in his work! >:-O" + ie );
@@ -133,15 +145,15 @@ public class Sleepingbarber extends Thread {
         Barber thomas = new Barber();
         thomas.start();
 
-        while(customerID < 20) {
+        while(true) {
 
             Customer customer = new Customer(customerID);
             customerID++;
             customer.start();
             msg("New customer arrives..");
             try{
-                double workFor = Math.random() * 1000; // Work for x number of ms
-                Thread.sleep((long) workFor); //(long) workFor); // Gotta get double to long somehow.. :P
+                double waitFor = Math.random() * 3000; // Wait for x ms before next customer
+                Thread.sleep((long) waitFor); // Gotta get double to long somehow.. :P
 
             }catch (InterruptedException ie) {
             }
