@@ -13,24 +13,26 @@ public class Sleepingbarber extends Thread {
     // Some modifiers
     private static final long BARBER_WORK_DELAY = 5000; // Modify worktime for barber
     private static final long CUSTOMER_DENSITY = 1000; // Modify how often customer arrives
-    // Uses Semaphores to lock access to concurrent resources
-    private static Semaphore customers = new Semaphore(0);
 
     // Set barbershop capacity, initialize empty seats.
     private final static int capacity = 10;
     private static int freeSeats = capacity;
+
+    // Uses Semaphores to lock access to concurrent resources
+    private static Semaphore customers = new Semaphore(0);
+    private static Semaphore barber = new Semaphore(0);
+    private static Semaphore chairs = new Semaphore(1);
+
 
     // Some counters
     private int servicedCustomers = 0;
     private int rejectedCustomers = 0;
     private int customerID = 1;
     private long totalWorkingTime = 0L;
-    private static Semaphore barber = new Semaphore(0);
-    private static Semaphore chairs = new Semaphore(1);
     private static long startTime = System.currentTimeMillis();
 
     private static void msg(String msg) {
-        // Just simplifies writing to the console
+        // Use this to write to console
         System.out.println(System.currentTimeMillis() - startTime + " ms --- " + msg);
     }
 
@@ -42,10 +44,12 @@ public class Sleepingbarber extends Thread {
 
     }
 
-    // Aync run method. We instantiate the barber, and start him looking for customers.
-    // Then we loop forever, instantiating new customers at random intervals.
-    // The barber is looping and trying to find customers as they arrive.
-    // When he is busy, they take a seat. If there are no seats, they leave.
+    /**
+     * Async run method. We instantiate the barber, and start him looking for customers.
+     * Then we loop forever, instantiating new customers at random intervals.
+     * The barber is looping and trying to find customers as they arrive.
+     * When he is busy, they take a seat. If there are no seats, they leave.
+     */
     @Override
     public void run() {
 
@@ -68,6 +72,10 @@ public class Sleepingbarber extends Thread {
         }
     }
 
+    /**
+     * Customer class. Each get an ID. They arrive and look for a chair. If no chairs are available, they leave.
+     * Otherwise they take a seat.
+     */
     class Customer extends Thread {
 
         // Threaded class for customers, they each get an ID:
@@ -115,6 +123,9 @@ public class Sleepingbarber extends Thread {
 
     }
 
+    /**
+     * The barber looks for customers indefinitely.
+     */
     class Barber extends Thread {
 
         Barber() {
